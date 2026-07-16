@@ -4,6 +4,13 @@ on:
   push:
   pull_request:
 
+# The default GITHUB_TOKEN is read-only; the report step needs to create a
+# check run, so grant it explicitly.
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -14,14 +21,18 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y chicken-bin
 
       # Build + install the egg and run its own self-test (tests/run.scm).
-      # This step fails the job if the self-test fails.
+      # `sudo` because the distro package's egg repository lives under
+      # /var/lib/chicken, which is only writable by root.  This step fails
+      # the job if the self-test fails.
       - name: Install egg and run self-test
-        run: chicken-install -test
+        run: sudo chicken-install -test
 
       # Demonstrate the XML feature: run a suite (with deliberate failures)
       # and capture a JUnit report.  The suite exits non-zero on failure, so
       # we keep the job going and let the reporter below show the details.
+      # `if: always()` so it still runs even if an earlier step failed.
       - name: Run example suite and capture JUnit XML
+        if: always()
         run: |
           mkdir -p test-results
           TEST_XML=test-results/junit.xml csi -s examples/mixed.scm || true
