@@ -112,13 +112,17 @@ core of it is:
 - name: Install CHICKEN Scheme
   run: sudo apt-get update && sudo apt-get install -y chicken-bin
 
-- name: Install egg and run self-test
-  run: chicken-install -test
+# sudo: the distro package's egg repository under /var/lib/chicken is
+# only writable by root.
+- name: Build and install egg
+  run: sudo chicken-install
 
+# Run the suite and capture the report. csi runs unprivileged so the file
+# is ours to read; a real test failure fails the job.
 - name: Run suite and capture JUnit XML
   run: |
     mkdir -p test-results
-    TEST_XML=test-results/junit.xml csi -s examples/mixed.scm || true
+    TEST_XML=test-results/junit.xml csi -s tests/run.scm
 
 - name: Publish test report
   uses: mikepenz/action-junit-report@v5
@@ -128,10 +132,22 @@ core of it is:
     include_passed: true
 ```
 
+For the report step to create a check, grant the workflow token
+`checks: write` (the default `GITHUB_TOKEN` is read-only):
+
+```yaml
+permissions:
+  contents: read
+  checks: write
+```
+
 That surfaces the run/passed/failed/skipped counts and per-test failure detail
 directly in the GitHub Checks tab and the job summary. Any equivalent action
 (`dorny/test-reporter`, `EnricoMi/publish-unit-test-result-action`, ...) reads
-the same file.
+the same file. The full workflow also builds
+[`examples/mixed.scm`](examples/mixed.scm) — a deliberately failing suite — into
+a separate report uploaded as an artifact, so you can see what captured
+failures and errors look like without turning the commit's checks red.
 
 ## New API
 
@@ -141,6 +157,7 @@ Beyond the full `test` API, `test2` adds:
 | --- | --- | --- |
 | `current-test-xml-output` | parameter | Output path for the JUnit report (a filename, or `"-"` for stdout). Defaults to the `TEST_XML` / `TEST_XML_FILE` environment variable, else `#f` (disabled). Set it *before* running tests. |
 | `test-write-xml` | procedure | `(test-write-xml [file])` writes the report now. With `file`, writes there; with no argument, writes to `current-test-xml-output` at most once. Called automatically at exit. |
+| `test-xml-reset!` | procedure | `(test-xml-reset!)` discards everything recorded so far, so a later run starts a fresh report. Useful for emitting several independent reports from one process, or dropping warm-up tests before capturing the real ones. |
 
 ## Development
 

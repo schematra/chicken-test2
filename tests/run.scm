@@ -40,6 +40,12 @@
 
 (define xml (generate-sample-xml))
 
+;; The sample above recorded its (deliberately mixed) cases into the shared
+;; recorder.  Drop them so that, if this self-test is itself run with TEST_XML
+;; set (as CI does), the captured report contains only this suite's own
+;; passing assertions -- not the sample's intentional failures.
+(test-xml-reset!)
+
 (define (has? sub) (and (substring-index sub xml) #t))
 
 (test-begin "test2 junit xml")

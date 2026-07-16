@@ -672,6 +672,13 @@
     (set! %test-xml-registered? #t)
     (on-exit (lambda () (test-write-xml)))))
 
+;; Discard everything recorded so far, so a subsequent run starts a fresh
+;; report.  Useful when a single process produces several independent reports,
+;; or to drop warm-up/self-check tests before capturing the real ones.
+(define (test-xml-reset!)
+  (set! %test-xml-cases '())
+  (set! %test-xml-auto-written? #f))
+
 ;; Called from the default handler for every non-skipped and skipped result.
 (define (test-xml-record! status info)
   (when (current-test-xml-output)

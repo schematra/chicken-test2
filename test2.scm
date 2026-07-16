@@ -18,7 +18,7 @@
    current-test-applier current-test-handler current-test-skipper
    current-test-group-reporter test-failure-count test-total-count
    ;; test2 additions:
-   current-test-xml-output test-write-xml)
+   current-test-xml-output test-write-xml test-xml-reset!)
   (import scheme chicken.base)
 
   (include "test-support.scm")
