@@ -4,4 +4,4 @@
 
 ((repo git "https://github.com/schematra/chicken-test2")
  (uri targz "https://github.com/schematra/chicken-test2/tarball/{egg-release}")
- (release "1.0.0"))
+ (release "0.1.0"))

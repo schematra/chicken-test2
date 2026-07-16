@@ -4,6 +4,6 @@
  (license "BSD")
  (category testing)
  (author "Alex Shinn; JUnit XML output by Rolando")
- (version "1.0.0")
+ (version "0.1.0")
  (components (extension test2
                         (source-dependencies "test-support.scm"))))
