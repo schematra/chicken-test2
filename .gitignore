@@ -1,0 +1,15 @@
+# CHICKEN build artifacts
+*.so
+*.o
+*.import.scm
+*.import.so
+*.link
+*.build.sh
+*.install.sh
+*.static.o
+*.c
+test2.egg-info
+
+# Local sandbox / CI output
+.egg-sandbox/
+test-results/

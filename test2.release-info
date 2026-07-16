@@ -1,0 +1,8 @@
+;; -*- Scheme -*-
+;;
+;; Update the USER/REPO placeholders below to your GitHub location before
+;; publishing.  chicken-install uses this file to locate release tarballs.
+
+((repo git "https://github.com/USER/test2-egg")
+ (uri targz "https://github.com/USER/test2-egg/tarball/{egg-release}")
+ (release "1.0.0"))

@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install CHICKEN Scheme
+        run: sudo apt-get update && sudo apt-get install -y chicken-bin
+
+      # Build + install the egg and run its own self-test (tests/run.scm).
+      # This step fails the job if the self-test fails.
+      - name: Install egg and run self-test
+        run: chicken-install -test
+
+      # Demonstrate the XML feature: run a suite (with deliberate failures)
+      # and capture a JUnit report.  The suite exits non-zero on failure, so
+      # we keep the job going and let the reporter below show the details.
+      - name: Run example suite and capture JUnit XML
+        run: |
+          mkdir -p test-results
+          TEST_XML=test-results/junit.xml csi -s examples/mixed.scm || true
+
+      # Turn the JUnit XML into a GitHub Checks annotation + summary
+      # (tests run / passed / failed / skipped, with per-test detail).
+      - name: Publish test report
+        uses: mikepenz/action-junit-report@v5
+        if: always()
+        with:
+          report_paths: 'test-results/junit.xml'
+          check_name: 'test2 example results'
+          include_passed: true
+          fail_on_failure: false
+
+      # Keep the raw XML as a downloadable artifact too.
+      - name: Upload JUnit XML
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: junit-xml
+          path: test-results/junit.xml
