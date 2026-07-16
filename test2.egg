@@ -1,6 +1,6 @@
 ;;; test2.egg -*- Scheme -*- vim: ft=scheme:
 
-((synopsis "Friendly test suite (a `test' superset) with optional JUnit XML output")
+((synopsis "Friendly test suite (a test-egg superset) with optional JUnit XML output")
  (license "BSD")
  (category testing)
  (author "Alex Shinn; JUnit XML output by Rolando")
