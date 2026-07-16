@@ -1,7 +1,8 @@
-;; -*- Scheme -*-
+;; -*- scheme -*-
 ;;
-;; chicken-install uses this file to locate release tarballs.
+;; chicken-install / henrietta read this as a sequence of top-level forms
+;; (no outer parens -- one (release ...) per version).
 
-((repo git "https://github.com/schematra/chicken-test2")
- (uri targz "https://github.com/schematra/chicken-test2/tarball/{egg-release}")
- (release "0.1.0"))
+(repo git "https://github.com/schematra/chicken-test2")
+(uri targz "https://github.com/schematra/chicken-test2/tarball/{egg-release}")
+(release "0.1.0")
